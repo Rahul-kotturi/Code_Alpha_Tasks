@@ -1,0 +1,357 @@
+/* Base Layout Resets */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7f6;
+    color: #333;
+}
+
+/* Header & Navigation Bar Styling */
+header {
+    background-color: #1a1a1a;
+    color: white;
+    padding: 0.8rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+header h1 a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+/* Search Bar Utility */
+.search-container {
+    flex: 0 1 400px;
+    display: flex;
+}
+.search-container input {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    border: none;
+    border-radius: 4px 0 0 4px;
+    outline: none;
+}
+.search-container button {
+    border-radius: 0 4px 4px 0;
+    background-color: #007bff;
+}
+.search-container button:hover { background-color: #0056b3; }
+
+/* Interactive Nav Actions */
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+/* Floating Cart Button */
+.cart-btn {
+    background: transparent;
+    border: 2px solid white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+.cart-btn:hover { background: white; color: black; }
+
+/* Account Profile Dropdown Mechanics */
+.profile-dropdown {
+    position: relative;
+    display: inline-block;
+}
+.profile-btn {
+    background: #333;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
+    font-weight: bold;
+}
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: white;
+    min-width: 220px;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.15);
+    border-radius: 6px;
+    padding: 1rem;
+    z-index: 200;
+    color: #333;
+}
+.dropdown-content p { margin: 0 0 0.8rem 0; font-size: 0.9rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; }
+.dropdown-content a { color: #007bff; text-decoration: none; display: block; margin-bottom: 0.5rem; }
+.dropdown-content button { width: 100%; background-color: #dc3545; }
+.dropdown-content button:hover { background-color: #c82333; }
+.profile-dropdown:hover .dropdown-content.show { display: block; }
+
+/* Product Display Grids */
+.container { padding: 2rem; max-width: 1200px; margin: 0 auto; }
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 2rem;
+}
+.card {
+    background: white;
+    padding: 1.2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    text-align: center;
+    transition: transform 0.2s;
+}
+.card:hover { transform: translateY(-5px); }
+.card img { max-width: 100%; height: 200px; object-fit: cover; border-radius: 6px; }
+.card h3 { font-size: 1.1rem; margin: 0.8rem 0 0.4rem; }
+.card p { color: #28a745; font-weight: bold; margin: 0 0 1rem; }
+.card a { display: inline-block; margin-bottom: 0.8rem; color: #007bff; text-decoration: none; font-size: 0.9rem; }
+
+/* Centered Layout for Single Product Details View */
+.center-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    padding: 2rem;
+}
+.details-card {
+    background: white;
+    display: flex;
+    gap: 3rem;
+    max-width: 800px;
+    width: 100%;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+.details-image img { max-width: 350px; width: 100%; border-radius: 8px; object-fit: cover; }
+.details-info { display: flex; flex-direction: column; justify-content: center; }
+.details-info h2 { margin-top: 0; font-size: 2rem; }
+.details-info .price { font-size: 1.5rem; color: #28a745; font-weight: bold; margin: 0.5rem 0 1.5rem; }
+
+/* Slide-out Sidebar Shopping Cart Interface */
+.cart-sidebar {
+    position: fixed;
+    top: 0; right: -350px;
+    width: 300px; height: 100%;
+    background: white;
+    box-shadow: -4px 0 15px rgba(0,0,0,0.1);
+    z-index: 1000;
+    padding: 1.5rem;
+    transition: right 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+.cart-sidebar.open { right: 0; }
+.cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 1rem; }
+.close-cart { background: none; border: none; color: #333; font-size: 1.5rem; font-weight: bold; cursor: pointer; }
+#cart-items { flex-grow: 1; overflow-y: auto; margin-top: 1rem; }
+.cart-footer { border-top: 1px solid #eee; padding-top: 1rem; }
+.cart-footer button { width: 100%; padding: 0.8rem; font-size: 1rem; }
+
+/* Buttons global baseline */
+button {
+    color: white; border: none; padding: 0.6rem 1.2rem; cursor: pointer; border-radius: 4px; font-weight: 500;
+}
+
+/* Rich Visual Elements Inside Sidebar Cart Drawer */
+.cart-item-card {
+    display: flex;
+    gap: 1rem;
+    background: #f9f9f9;
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    border-radius: 6px;
+    border: 1px solid #eee;
+    align-items: center;
+}
+.cart-item-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+.cart-item-details {
+    flex-grow: 1;
+}
+.cart-item-details h4 {
+    margin: 0 0 0.2rem 0;
+    font-size: 0.95rem;
+}
+.cart-item-price {
+    color: #28a745;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin: 0;
+}
+.cart-item-meta {
+    font-size: 0.8rem;
+    color: #666;
+    margin: 0.2rem 0 0 0;
+}
+.cart-item-remove-btn {
+    background: none !important;
+    color: #dc3545 !important;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.85rem;
+    padding: 0 !important;
+}
+.rating-stars {
+    color: #ffc107;
+    font-size: 0.85rem;
+    margin-top: 0.2rem;
+}
+
+/* Full Page Dedicated Cart Layout Framework */
+.page-cart-container {
+    max-width: 1000px !important;
+    margin: 2rem auto;
+    display: block !important; /* Overrides structural flex alignments */
+}
+.cart-layout-wrapper {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2.5rem;
+    align-items: start;
+}
+.cart-items-list-pane {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.cart-summary-panel {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    border: 1px solid #eee;
+}
+
+/* Expanded Large Sized Horizontal Rows for Items Inside Cart Page */
+.page-cart-row {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: white;
+    padding: 1.2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    border: 1px solid #eee;
+}
+.page-cart-row img {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+.page-cart-info-block {
+    flex-grow: 1;
+}
+.page-cart-info-block h4 {
+    margin: 0 0 0.4rem 0;
+    font-size: 1.2rem;
+}
+.page-cart-meta-metrics {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #555;
+}
+/*//////////////////////////////////////////////////
+/* 1. Bright Blue Styling for Add to Cart / Action Buttons */
+.card button, #product-details button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    font-weight: 600;
+    border-radius: 4px;
+    transition: background 0.2s ease;
+}
+.card button:hover, #product-details button:hover {
+    background-color: #0056b3;
+}
+
+/* 3. Centered, Realistic Card Layout for Login/Register Page */
+.auth-page-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 85vh;
+    background-color: #f4f7f6;
+}
+
+.auth-container {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.auth-container h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #1a1a1a;
+    font-size: 1.6rem;
+}
+
+.auth-form-group {
+    margin-bottom: 1.2rem;
+}
+
+.auth-form-group label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.auth-form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+.auth-form-group input:focus {
+    border-color: #007bff;
+}
+
+.auth-btn-container {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.auth-btn-container button {
+    flex: 1;
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.btn-login { background-color: #28a745; }
+.btn-login:hover { background-color: #218838; }
+.btn-register { background-color: #6c757d; }
+.btn-register:hover { background-color: #5a6268; }
