@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Platform</title>
+    <style>
+        :root {
+            /* Premium Black and Vibrant Orange Color Space Palette */
+            --bg-color: #121214;       /* Deep matte black background */
+            --card-bg: #1a1a1e;        /* Dark charcoal card background */
+            --primary-color: #ff6b00;   /* Vibrant electric orange */
+            --primary-hover: #e05e00;   /* Deeper burnt orange for hover states */
+            --text-main: #ffffff;      /* Crisp white body text */
+            --text-sub: #a0a0ab;       /* Muted ash gray secondary text */
+            --border-color: #2a2a30;   /* Subtle slate borders */
+        }
+        body { 
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; 
+            background-color: var(--bg-color); 
+            margin: 0; 
+            padding: 0; 
+            color: var(--text-main);
+        }
+        .navbar {
+            background-color: var(--card-bg);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .navbar-brand { font-size: 24px; font-weight: bold; color: var(--primary-color); text-decoration: none; letter-spacing: 0.5px; }
+        .nav-links a { margin-left: 20px; text-decoration: none; color: var(--text-sub); font-weight: 600; transition: 0.2s; }
+        .nav-links a:hover { color: var(--primary-color); }
+        .app-container { max-width: 1100px; margin: 30px auto; padding: 0 20px; display: flex; gap: 24px; }
+        .content-main { flex: 2; }
+        .sidebar-right { flex: 1; display: none; }
+        @media (min-width: 900px) { .sidebar-right { display: block; } }
+        
+        /* Glass-tinted dark cards */
+        .card { 
+            background: var(--card-bg); 
+            border-radius: 12px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15); 
+            padding: 24px; 
+            margin-bottom: 25px; 
+            border: 1px solid var(--border-color); 
+        }
+        
+        /* Orange Action Buttons */
+        button { 
+            background-color: var(--primary-color); 
+            color: white; 
+            border: none; 
+            padding: 12px 18px; 
+            border-radius: 6px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            font-size: 14px; 
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+        button:hover { background-color: var(--primary-hover); }
+        button:active { transform: scale(0.98); }
+        
+        /* Customized Dark Inputs for Login & Posting elements */
+        input, textarea {
+            background-color: #222227 !important;
+            border: 1px solid var(--border-color) !important;
+            color: white !important;
+            border-radius: 6px;
+        }
+        input:focus, textarea:focus {
+            border-color: var(--primary-color) !important;
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">ConnectAlpha</a>
+        <div class="nav-links">
+            {% if user.is_authenticated %}
+                <a href="/">Home Feed</a>
+                <a href="/profile/{{ user.username }}/">My Profile</a>
+                <a href="/logout/">Logout</a>
+            {% else %}
+                <a href="/login/">Login</a>
+                <a href="/register/">Register</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="app-container">
+        <div class="content-main">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card" style="max-width: 400px; margin: 60px auto; text-align: center;">
+    <h2 style="color: #ffffff; margin-bottom: 20px;">Log In</h2>
+    {% if error %}
+        <p style="color: #ff3333; font-weight: 600;">{{ error }}</p>
+    {% endif %}
+    <form method="POST" action="/login/">
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="Username" style="width:100%; padding:12px; margin:10px 0; border-radius:6px; box-sizing: border-box;" required>
+        <input type="password" name="password" placeholder="Password" style="width:100%; padding:12px; margin:10px 0; border-radius:6px; box-sizing: border-box;" required>
+        <button type="submit" style="width: 100%; margin-top: 15px;">Sign In</button>
+    </form>
+    <p style="margin-top: 25px; color: var(--text-sub);">New here? <a href="/register/" style="color: var(--primary-color); text-decoration: none; font-weight: bold;">Create an account</a></p>
+</div>
+{% endblock %}

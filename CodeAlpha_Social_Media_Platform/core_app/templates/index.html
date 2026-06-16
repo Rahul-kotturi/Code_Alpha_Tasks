@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="display: flex; gap: 24px; align-items: flex-start;">
+    
+    <div style="flex: 2;">
+        {% if user.is_authenticated %}
+        <div class="card">
+            <h3 style="margin-top: 0; color: #ffffff;">What's on your mind, @{{ user.username }}?</h3>
+            <textarea id="post-content" placeholder="Share your thoughts or updates..." style="width: 100%; height: 80px; padding: 12px; background-color: #222227; border: 1px solid #2a2a30; color: #ffffff; border-radius: 8px; resize: none; font-family: inherit; box-sizing: border-box;"></textarea>
+            <button onclick="createPost()" style="margin-top: 10px; float: right;">Publish Post</button>
+            <div style="clear: both;"></div>
+        </div>
+        {% else %}
+        <div class="card" style="background-color: #222227; border-color: var(--primary-color); text-align: center;">
+            <p style="margin: 0; font-weight: 600; color: var(--primary-color);">
+                👋 Want to share your thoughts? <a href="/login/" style="text-decoration: underline; color: #ffffff;">Log in</a> or <a href="/register/" style="text-decoration: underline; color: #ffffff;">create an account</a> to join the conversation!
+            </p>
+        </div>
+        {% endif %}
+
+        <div id="posts-container"></div>
+    </div>
+
+    <div class="sidebar-right" style="flex: 1; max-width: 300px;">
+        <div class="card" style="text-align: center;">
+            <div style="width: 60px; height: 60px; background: #222227; color: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 10px; border: 1px solid #2a2a30;">
+                📢
+            </div>
+            <h4 style="margin: 5px 0; color: #ffffff;">Platform Global Feed</h4>
+            <p style="color: #a0a0ab; font-size: 13px; margin: 0 0 15px 0;">See what members are talking about in real time.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function loadPosts() {
+        const response = await fetch('/api/posts/');
+        const data = await response.json();
+        const container = document.getElementById('posts-container');
+        container.innerHTML = '';
+
+        data.posts.forEach(post => {
+            const likeBtnClass = post.has_liked ? 'like-btn liked' : 'like-btn';
+            
+            container.innerHTML += `
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 8px;">
+                        <a href="/profile/${post.username}/" style="text-decoration: none; color: var(--primary-color);">@${post.username}</a>
+                        <span style="font-size: 12px; color: #a0a0ab; font-weight: normal;">${post.created_at}</span>
+                    </div>
+                    <div style="font-size: 15px; line-height: 1.5; color: #ffffff; margin: 12px 0;">${post.content}</div>
+                    <div style="border-top: 1px solid #2a2a30; padding-top: 10px; margin-top: 10px;">
+                        <button class="${likeBtnClass}" onclick="likePost(${post.id})">
+                            👍 Like (${post.likes_count})
+                        </button>
+                    </div>
+                </div>`;
+        });
+    }
+
+    async function createPost() {
+        const content = document.getElementById('post-content').value;
+        if (!content.trim()) return;
+
+        const getCookie = (name) => {
+            let value = `; ${document.cookie}`;
+            let parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        };
+
+        const response = await fetch('/api/posts/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ content: content })
+        });
+
+        if (response.ok) {
+            document.getElementById('post-content').value = '';
+            loadPosts();
+        }
+    }
+
+    async function likePost(id) {
+        const getCookie = (name) => {
+            let value = `; ${document.cookie}`;
+            let parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        };
+
+        const response = await fetch(`/api/posts/${id}/like/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        });
+
+        if (response.status === 401) {
+            window.location.href = '/login/';
+            return;
+        }
+
+        if (response.ok) {
+            loadPosts();
+        }
+    }
+
+    loadPosts();
+</script>
+
+<style>
+    /* Custom Styling for Orange/Dark Theme Like Buttons */
+    .like-btn { background-color: #222227; color: #ffffff; border: 1px solid #2a2a30; transition: 0.1s ease; }
+    .like-btn:hover { background-color: #2a2a32; border-color: #a0a0ab; }
+    .like-btn.liked { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+    .like-btn.liked:hover { background-color: var(--primary-hover); }
+</style>
+{% endblock %}
