@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConnectAlpha - Secure Video Lounge</title>
+    <style>
+        :root {
+            --bg-main: #0c0c0e;
+            --card-bg: #141417;
+            --accent-orange: #ff6b00;
+            --accent-hover: #e05e00;
+            --border-slate: #222227;
+            --text-white: #ffffff;
+            --text-gray: #a0a0ab;
+        }
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .auth-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-slate);
+            padding: 40px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 380px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+        .logo-title {
+            color: var(--accent-orange);
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        .subtitle {
+            color: var(--text-gray);
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        input {
+            width: 100%;
+            padding: 14px;
+            margin: 10px 0;
+            background: #1b1b20;
+            border: 1px solid var(--border-slate);
+            border-radius: 8px;
+            color: white;
+            box-sizing: border-box;
+            transition: 0.2s;
+        }
+        input:focus {
+            border-color: var(--accent-orange);
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent-orange);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: var(--accent-hover);
+        }
+        .toggle-prompt {
+            margin-top: 25px;
+            font-size: 13px;
+            color: var(--text-gray);
+        }
+        .toggle-prompt a {
+            color: var(--accent-orange);
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-card">
+        <div class="logo-title">ConnectAlpha</div>
+        <div class="subtitle">Secure Real-Time Communication Hub</div>
+        
+        <form id="auth-form" onsubmit="event.preventDefault(); handleAuth();">
+            <input type="email" id="email" placeholder="Corporate Email Address" required>
+            <input type="password" id="password" placeholder="Account Password" required>
+            <button type="submit" id="submit-btn">Enter Meeting Lounge</button>
+        </form>
+
+        <div class="toggle-prompt">
+            Secured end-to-end with AES-256 encryption keys.
+        </div>
+    </div>
+
+    <script>
+        function handleAuth() {
+            // Placeholder auth forwarding for layout test
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+</html>

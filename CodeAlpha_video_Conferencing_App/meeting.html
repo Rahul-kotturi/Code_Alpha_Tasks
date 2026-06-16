@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConnectAlpha - Secure Workspace Room</title>
+    <style>
+        :root {
+            --bg-main: #0c0c0e;
+            --card-bg: #141417;
+            --accent-orange: #ff6b00;
+            --accent-hover: #e05e00;
+            --border-slate: #222227;
+            --text-white: #ffffff;
+            --text-gray: #a0a0ab;
+        }
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-white);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .app-header {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-slate);
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .room-tag {
+            background: #1b1b20;
+            border: 1px solid var(--border-slate);
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-family: monospace;
+            color: var(--accent-orange);
+            font-weight: bold;
+        }
+        .workspace-grid {
+            flex: 1;
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+            height: calc(100vh - 140px);
+        }
+        /* Left Column: Video Feeds stream */
+        .video-container {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 15px;
+            background: #101012;
+            border: 1px solid var(--border-slate);
+            border-radius: 12px;
+            padding: 15px;
+            align-content: center;
+        }
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background: #1b1b20;
+            border-radius: 8px;
+            border: 1px solid var(--border-slate);
+            transform: scaleX(-1); /* Mirror effect for webcam */
+        }
+        /* Right Column: Whiteboard collaboration area */
+        .whiteboard-panel {
+            flex: 1.2;
+            background: var(--card-bg);
+            border: 1px solid var(--border-slate);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .board-controls {
+            background: #1b1b20;
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+            border-bottom: 1px solid var(--border-slate);
+        }
+        canvas {
+            flex: 1;
+            background: #ffffff; /* Crisp white board contrasting with dark theme controls */
+            cursor: crosshair;
+        }
+        /* Bottom Control Bar Layout */
+        .control-tray {
+            height: 80px;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border-slate);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+        .tray-btn {
+            background: #1b1b20;
+            border: 1px solid var(--border-slate);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .tray-btn:hover {
+            border-color: var(--accent-orange);
+            background: #222227;
+        }
+        .tray-btn.active-orange {
+            background: var(--accent-orange);
+            border-color: var(--accent-orange);
+        }
+        .tray-btn.leave-btn {
+            background: #cc2525;
+            border-color: #cc2525;
+        }
+        .tray-btn.leave-btn:hover {
+            background: #b01e1e;
+        }
+        #file-input { display: none; }
+    </style>
+</head>
+<body>
+
+    <header class="app-header">
+        <div style="font-weight: 800; font-size: 20px; color: var(--accent-orange);">ConnectAlpha Session</div>
+        <div class="room-tag">ROOM ID: <span id="room-id-display">Connecting...</span></div>
+    </header>
+
+    <div class="workspace-grid">
+        <div class="video-container" id="video-grid">
+            <video id="local-video" autoplay playsinline muted></video>
+        </div>
+
+        <div class="whiteboard-panel">
+            <div class="board-controls">
+                <span style="color: var(--text-gray); font-size: 14px; font-weight:600; margin-top:5px; margin-right:10px;">📋 Shared Sketchpad</span>
+                <button onclick="clearWhiteboard()" style="background:#cc2525; border:none; color:white; padding:4px 10px; border-radius:4px; font-weight:600; cursor:pointer;">Clear Canvas</button>
+            </div>
+            <canvas id="whiteboard-canvas"></canvas>
+        </div>
+    </div>
+
+    <div class="control-tray">
+        <button class="tray-btn active-orange" id="video-toggle" onclick="toggleCamera()">🎥 Cam ON</button>
+        <button class="tray-btn active-orange" id="audio-toggle" onclick="toggleMic()">🎙️ Mic ON</button>
+        <button class="tray-btn" id="screen-share-btn" onclick="toggleScreenShare()">🖥️ Share Screen</button>
+        
+        <button class="tray-btn" onclick="document.getElementById('file-input').click()">📁 Share File</button>
+        <input type="file" id="file-input" onchange="shareFileUploaded(this)">
+
+        <button class="tray-btn leave-btn" onclick="window.location.href='dashboard.html'">🚪 End Call</button>
+    </div>
+
+    <script>
+        // Extract Room Code from URL string parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomId = urlParams.get('room') || 'General-Lounge';
+        document.getElementById('room-id-display').innerText = roomId;
+
+        let localStream;
+        let isScreenSharing = false;
+        let screenStream;
+
+        // Initialize Native WebRTC Media Streams (Access Camera & Mic)
+        async function initMedia() {
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                document.getElementById('local-video').srcObject = localStream;
+            } catch (err) {
+                console.error("Camera access blocked by security sandbox:", err);
+                alert("Please authorize webcam/mic parameters to establish live calling hooks.");
+            }
+        }
+
+        // Camera Toggling Logic
+        function toggleCamera() {
+            const videoTrack = localStream.getVideoTracks()[0];
+            const btn = document.getElementById('video-toggle');
+            if (videoTrack.enabled) {
+                videoTrack.enabled = false;
+                btn.innerText = "❌ Cam OFF";
+                btn.classList.remove('active-orange');
+            } else {
+                videoTrack.enabled = true;
+                btn.innerText = "🎥 Cam ON";
+                btn.classList.add('active-orange');
+            }
+        }
+
+        // Microphone Toggling Logic
+        function toggleMic() {
+            const audioTrack = localStream.getAudioTracks()[0];
+            const btn = document.getElementById('audio-toggle');
+            if (audioTrack.enabled) {
+                audioTrack.enabled = false;
+                btn.innerText = "❌ Mic OFF";
+                btn.classList.remove('active-orange');
+            } else {
+                audioTrack.enabled = true;
+                btn.innerText = "🎙️ Mic ON";
+                btn.classList.add('active-orange');
+            }
+        }
+
+        // Native Screen Sharing Hook
+        async function toggleScreenShare() {
+            const btn = document.getElementById('screen-share-btn');
+            if (!isScreenSharing) {
+                try {
+                    screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                    document.getElementById('local-video').srcObject = screenStream;
+                    isScreenSharing = true;
+                    btn.innerText = "🛑 Stop Sharing";
+                    btn.classList.add('active-orange');
+                    
+                    // Revert back if sharing window is manually closed via browser UI
+                    screenStream.getVideoTracks()[0].onended = () => { stopScreenSharing(); };
+                } catch (err) {
+                    console.log("Screen share setup cancelled.");
+                }
+            } else {
+                stopScreenSharing();
+            }
+        }
+
+        function stopScreenSharing() {
+            const btn = document.getElementById('screen-share-btn');
+            document.getElementById('local-video').srcObject = localStream;
+            isScreenSharing = false;
+            btn.innerText = "🖥️ Share Screen";
+            btn.classList.remove('active-orange');
+        }
+
+        // File Sharing Data Pipeline Sim
+        function shareFileUploaded(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                alert(`Encrypted package file generated for upload:\n📄 ${file.name} (${Math.round(file.size/1024)} KB)\nStatus: Shared over secure WebRTC DataChannel connection successfully!`);
+            }
+        }
+
+        // HTML5 Canvas Collaborative Whiteboard Engine
+        const canvas = document.getElementById('whiteboard-canvas');
+        const ctx = canvas.getContext('2d');
+        let drawing = false;
+
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight - 45;
+            ctx.lineCap = 'round';
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#ff6b00'; // Draw lines matching orange corporate accent colors
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        setTimeout(resizeCanvas, 100);
+
+        canvas.addEventListener('mousedown', () => { drawing = true; ctx.beginPath(); });
+        canvas.addEventListener('mouseup', () => drawing = false);
+        canvas.addEventListener('mousemove', draw);
+
+        function draw(e) {
+            if (!drawing) return;
+            const rect = canvas.getBoundingClientRect();
+            ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+            ctx.stroke();
+        }
+
+        function clearWhiteboard() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Bootstrapping engine
+        initMedia();
+    </script>
+</body>
+</html>

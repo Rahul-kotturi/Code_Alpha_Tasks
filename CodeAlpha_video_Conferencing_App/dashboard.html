@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConnectAlpha - Dashboard</title>
+    <style>
+        :root {
+            --bg-main: #0c0c0e;
+            --card-bg: #141417;
+            --accent-orange: #ff6b00;
+            --accent-hover: #e05e00;
+            --border-slate: #222227;
+            --text-white: #ffffff;
+            --text-gray: #a0a0ab;
+        }
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-white);
+        }
+        .navbar {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-slate);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar-brand {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--accent-orange);
+            text-decoration: none;
+        }
+        .logout-btn {
+            background: transparent;
+            border: 1px solid var(--border-slate);
+            color: var(--text-gray);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .logout-btn:hover {
+            color: var(--text-white);
+            border-color: var(--accent-orange);
+        }
+        .container {
+            max-width: 900px;
+            margin: 60px auto;
+            padding: 0 20px;
+            display: flex;
+            gap: 30px;
+        }
+        .panel {
+            flex: 1;
+            background: var(--card-bg);
+            border: 1px solid var(--border-slate);
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        h2 {
+            margin-top: 0;
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+        p {
+            color: var(--text-gray);
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            background: #1b1b20;
+            border: 1px solid var(--border-slate);
+            border-radius: 6px;
+            color: white;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        input:focus {
+            border-color: var(--accent-orange);
+            outline: none;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            transition: 0.2s;
+        }
+        .btn-primary {
+            background: var(--accent-orange);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+        .btn-secondary {
+            background: #1b1b20;
+            color: white;
+            border: 1px solid var(--border-slate);
+        }
+        .btn-secondary:hover {
+            border-color: var(--accent-orange);
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="dashboard.html" class="navbar-brand">ConnectAlpha</a>
+        <button class="logout-btn" onclick="window.location.href='index.html'">Sign Out</button>
+    </nav>
+
+    <div class="container">
+        <div class="panel">
+            <h2>Host a Meeting</h2>
+            <p>Generate a secure room ID space instantly to share with your colleagues or peers for multi-user screen and video streams.</p>
+            <button class="btn btn-primary" onclick="createNewRoom()">Create Room Code</button>
+        </div>
+
+        <div class="panel">
+            <h2>Join a Meeting</h2>
+            <p>Enter a secure room credential signature code shared by a host to join the live whiteboard session and audio/video channel stream.</p>
+            <input type="text" id="room-code-input" placeholder="e.g., room-xyz-123">
+            <button class="btn btn-secondary" onclick="joinRoom()">Enter Session</button>
+        </div>
+    </div>
+
+    <script>
+        // Generate a random unique room token
+        function createNewRoom() {
+            const randomCode = Math.random().toString(36).substring(2, 7) + '-' + Math.random().toString(36).substring(2, 7);
+            window.location.href = `meeting.html?room=${randomCode}`;
+        }
+
+        // Validate and route user to the requested meeting token channel
+        function joinRoom() {
+            const roomInput = document.getElementById('room-code-input').value.trim();
+            if (roomInput) {
+                window.location.href = `meeting.html?room=${roomInput}`;
+            } else {
+                alert('Please enter a valid meeting room code.');
+            }
+        }
+    </script>
+</body>
+</html>
